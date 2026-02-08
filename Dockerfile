@@ -27,4 +27,11 @@ RUN if [ -f requirements.txt ]; then \
 EXPOSE 8000
 
 # Start MCP server (if logs show a different entrypoint, we adjust CMD)
-CMD ["python", "-m", "mcp_server"]
+CMD ["sh", "-c", "set -e; cd /app/graphiti/mcp_server; \
+  if [ -f main.py ]; then python main.py; \
+  elif [ -f server.py ]; then python server.py; \
+  elif [ -f app.py ]; then python app.py; \
+  elif [ -f run.py ]; then python run.py; \
+  elif [ -f mcp_server.py ]; then python mcp_server.py; \
+  else echo 'No known entrypoint (main.py/server.py/app.py/run.py/mcp_server.py) found.' && ls -la && exit 1; fi"]
+
